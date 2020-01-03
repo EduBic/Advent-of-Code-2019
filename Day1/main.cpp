@@ -42,7 +42,8 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    if (!argc == 2) {
+    if (argc != 2)
+    {
         cerr << "Insert file name as input" << endl;
         exit(1);
     }
@@ -50,15 +51,24 @@ int main(int argc, char *argv[])
     ifstream inputList;
     inputList.open(argv[1]);
 
-    if (!inputList) {
+    if (!inputList)
+    {
         cerr << "Unable to open file " << argv[1];
         exit(1);   // call system to stop
     }
+    
     int totalFuel = 0;
-    for (int mass = 0; inputList >> mass;) {
-        int fuel = mass / 3 - 2;
-        totalFuel += fuel;
-        cout << "Mass: " << mass << " Fuel Needed: " << fuel << endl;
+    for (int mass = 0; inputList >> mass;)
+    {
+        while (mass >= 0) {
+            int fuel = mass / 3 - 2;
+            if (fuel > 0)
+            {            
+                totalFuel += fuel;
+                cout << "Mass: " << mass << " Fuel Needed: " << fuel << endl;
+            }
+            mass = fuel;
+        }
     }
     
     cout << "Total Fuel Needed: " << totalFuel << endl;
