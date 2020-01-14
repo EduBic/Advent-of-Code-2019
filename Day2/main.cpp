@@ -84,4 +84,5 @@ int main(int argc, char *argv[])
     }
     
     cout << programInputs[0] << endl;
+    cout << "is " << programInputs[0] << " less than 19690720? " << (programInputs[0] < 19690720 ? "true" : "false") << endl;
 }
