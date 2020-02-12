@@ -1,5 +1,7 @@
 #include <string>
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
 using namespace std;
 
@@ -35,7 +37,7 @@ void wireTracking(const Point& origin, const int sizeWire,
     for (int i = 0; i < sizeWire; i++)
     {
         // print value of wire1 at index i
-        cout << wire[i] << endl;
+        // cout << wire[i] << endl;
         char direction = wire[i].at(0);
         int steps = stoi(wire[i].substr(1, 2)); // get second char of instruction
 
@@ -70,10 +72,66 @@ void wireTracking(const Point& origin, const int sizeWire,
             }
         }
 
-        cout << "(" << currentX << "," << currentY << ")" << endl;
+        // cout << "(" << currentX << "," << currentY << ")" << endl;
 
-        cout << endl;
+        // cout << endl;
         //print<numRows, numColumns>(board);
+    }
+}
+
+void getFromFile(string** wire1, int& numberOfCommas1, string** wire2, int& numberOfCommas2) {
+
+    const string filename = "wires-ed.dat";
+
+    // read file
+    ifstream inputList;
+    inputList.open(filename);
+    if (!inputList)
+    {
+        cerr << "Unable to open file " << filename;
+        exit(1);   // call system to stop
+    }
+
+    // iterate over the lines inside the inputList file
+    string line;
+    int iterCount = 1;
+    while (getline(inputList, line))
+    {
+        // cout << endl << line << endl;
+        // Count number of commas in the string line        
+        for (size_t i = 0; i < line.length(); i++) 
+        {
+            if (line[i] == ',') {
+                if (iterCount == 1)
+                    numberOfCommas1++;
+                else
+                    numberOfCommas2++;
+            }
+        }
+
+        if (iterCount == 1) {
+            (*wire1) = new string[numberOfCommas1 + 1];
+        } else {
+            (*wire2) = new string[numberOfCommas2 + 1];
+        }
+
+        // From string line (with commas) to array of string (my wire)
+        istringstream ss(line);
+        string token;
+
+        for (int i = 0; getline(ss, token, ','); i++)
+        {
+            // convert string token to int 
+            // and save the input number 
+            istringstream strToInput(token);
+            if (iterCount == 1) {
+                strToInput >> (*wire1)[i];
+            } else {
+                strToInput >> (*wire2)[i];
+            }
+        }
+
+        iterCount++;
     }
 }
 
@@ -84,33 +142,45 @@ int main()
     // compute Manhattan distance
     //  https://xlinux.nist.gov/dads/HTML/manhattanDistance.html
 
-    cout << "Init wires" << endl;
-    int sizeWire1 = 4; //9
-    string wire1[] = 
-        {"R8","U5","L5","D3"};
-        // { "R75","D30","R83","U83","L12","D49","R71","U7","L72" };
-        //{"R98","U47","R26","D63","R33","U87","L62","D20","R33","U53","R51"};
+    // cout << "Init wires" << endl;
+    // int sizeWire1 = 4; //9
+    // string wire1[] = 
+    //     {"R8","U5","L5","D3"};
+    //     // { "R75","D30","R83","U83","L12","D49","R71","U7","L72" };
+    //     //{"R98","U47","R26","D63","R33","U87","L62","D20","R33","U53","R51"};
 
-    int sizeWire2 = 4;
-    string wire2[] = 
-        {"U7","R6","D4","L4"};                                          // ex 0
-        // { "U62","R66","U55","R34","D71","R55","D58","R83" };         // ex 1 => 8
-        // {"U98","R91","D20","R16","D67","R40","U7","R15","U6","R7"};  // ex 2
+    // int sizeWire2 = 4;
+    // string wire2[] = 
+    //     {"U7","R6","D4","L4"};                                          // ex 0
+    //     // { "U62","R66","U55","R34","D71","R55","D58","R83" };         // ex 1 => 8
+    //     // {"U98","R91","D20","R16","D67","R40","U7","R15","U6","R7"};  // ex 2
 
-    
+    // read from file
+    int sizeW1 = 0;
+    string* w1 = nullptr;
+    int sizeW2 = 0;
+    string* w2 = nullptr;
 
-    // Simple example
-    // + X
-    // o +
-    // U1, R1
-    // R1, U1
-    //
-    //  Table 400x400
-    //        Punto O(200, 200)
+    getFromFile(&w1, sizeW1, &w2, sizeW2);
+
+    // numberOfCommas + 1
+    sizeW1++;
+    sizeW2++;
+
+    cout << sizeW1 << " & " << sizeW2 << endl;
+
+    // for (int i = 0; i < sizeW1; i++) {
+    //     cout << w1[i] << ' ';
+    // }
+    // cout << endl;
+    // for (int i = 0; i < sizeW2; i++) {
+    //     cout << w2[i] << ' ';
+    // }
+
     
     cout << "Init Board" << endl;
-    const int numColumns = 10000;
-    const int numRows = 10000;
+    const int numColumns = 70000;
+    const int numRows = 70000;
     Point origin(numColumns / 2 - 1, numRows / 2 - 1);
     cout << "Origin (" << origin.x << ", " << origin.y << ")" << endl;
 
@@ -135,9 +205,9 @@ int main()
     board[origin.y][origin.x] = 'o';
 
     cout << "DEBUG: start tracking 1 wire" << endl;
-    wireTracking(origin, sizeWire1, wire1, board, intersections, intersectionCount, 'A', 'B');
+    wireTracking(origin, sizeW1, w1, board, intersections, intersectionCount, 'A', 'B');
     cout << "DEBUG: start tracking 2 wire" << endl;
-    wireTracking(origin, sizeWire2, wire2, board, intersections, intersectionCount, 'B', 'A');
+    wireTracking(origin, sizeW2, w2, board, intersections, intersectionCount, 'B', 'A');
 
     cout << "Origin (" << origin.x << ", " << origin.y << ")" << endl;
     cout << intersectionCount << " intersections found" << endl;
