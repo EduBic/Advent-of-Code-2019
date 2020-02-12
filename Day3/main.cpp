@@ -60,15 +60,23 @@ void wireTracking(const Point& origin, const int sizeWire,
                 currentY++;
             }
             
-            if (board[currentY][currentX] == idOtherWire)
-            {
-                board[currentY][currentX] = 'x';
-                intersections[intersectionCount] = Point(currentX, currentY);
-                intersectionCount++;
+            if (board[currentY][currentX] != 'o') {
+                if (board[currentY][currentX] == idOtherWire)
+                {
+                    board[currentY][currentX] = 'x';
+                    intersections[intersectionCount] = Point(currentX, currentY);
+                    intersectionCount++;
+                }
+                else 
+                {
+                    board[currentY][currentX] = idCurrentWire;
+                }
+            } else {
+                cout << endl << "SKIP OVERRIDE ORIGIN!" << endl;
             }
-            else 
-            {
-                board[currentY][currentX] = idCurrentWire;
+
+            if (currentX > 50000 || currentY > 50000) {
+                cout << endl << "OUT FROM THE BOARD!!" << endl;
             }
         }
 
@@ -76,6 +84,11 @@ void wireTracking(const Point& origin, const int sizeWire,
 
         // cout << endl;
         //print<numRows, numColumns>(board);
+        if (i == sizeWire - 1) {
+            cout << "Last i= " << i << endl 
+                 << "Last Instruction= " << wire[i] << endl
+                 << "SizeWire: " << sizeWire << endl;
+        }
     }
 }
 
@@ -168,7 +181,6 @@ int main()
     sizeW2++;
 
     cout << sizeW1 << " & " << sizeW2 << endl;
-
     // for (int i = 0; i < sizeW1; i++) {
     //     cout << w1[i] << ' ';
     // }
@@ -179,8 +191,8 @@ int main()
 
     
     cout << "Init Board" << endl;
-    const int numColumns = 70000;
-    const int numRows = 70000;
+    const int numColumns = 50000;
+    const int numRows = 50000;
     Point origin(numColumns / 2 - 1, numRows / 2 - 1);
     cout << "Origin (" << origin.x << ", " << origin.y << ")" << endl;
 
@@ -189,6 +201,7 @@ int main()
     for (int indexRow = 0; indexRow < numRows; indexRow++) {
         board[indexRow] = new char[numColumns];
     }
+    board[origin.y][origin.x] = 'o';
 
      // board[numRows][numColumns];
     Point intersections[1000];
@@ -204,10 +217,10 @@ int main()
 
     board[origin.y][origin.x] = 'o';
 
-    cout << "DEBUG: start tracking 1 wire" << endl;
-    wireTracking(origin, sizeW1, w1, board, intersections, intersectionCount, 'A', 'B');
-    cout << "DEBUG: start tracking 2 wire" << endl;
-    wireTracking(origin, sizeW2, w2, board, intersections, intersectionCount, 'B', 'A');
+    cout << endl << "DEBUG: start tracking 1 wire" << endl;
+    wireTracking(origin, sizeW1, w1, board, intersections, intersectionCount, 'W', 'S');
+    cout << endl << "DEBUG: start tracking 2 wire" << endl;
+    wireTracking(origin, sizeW2, w2, board, intersections, intersectionCount, 'S', 'W');
 
     cout << "Origin (" << origin.x << ", " << origin.y << ")" << endl;
     cout << intersectionCount << " intersections found" << endl;
@@ -229,4 +242,14 @@ int main()
         }
     }
     cout << minDistance << " is the min distance" << endl;
+
+    // print a range of origin point
+    int limitX = 200;
+    int limitY = 100;
+    for (int r = 0; r < limitY; r++) {
+        for (int c = 0; c < limitX; c++) {
+            cout << board[origin.y - limitY / 2 + r][origin.x - limitX / 2 + c];
+        }
+        cout << endl;
+    }
 }
