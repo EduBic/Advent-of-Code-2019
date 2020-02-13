@@ -246,12 +246,12 @@ int main()
     cout << minDistance << " is the min distance" << endl;
 
     // print a range of origin point
-    int limitX = 160;
-    int limitY = 100;
-    for (int r = 0; r < limitY; r++) {
-        for (int c = 0; c < limitX; c++) {
-            cout << board[origin.y - limitY / 2 + r][origin.x - limitX / 2 + c];
-        }
-        cout << endl;
-    }
+    // int limitX = 160;
+    // int limitY = 100;
+    // for (int r = 0; r < limitY; r++) {
+    //     for (int c = 0; c < limitX; c++) {
+    //         cout << board[origin.y - limitY / 2 + r][origin.x - limitX / 2 + c];
+    //     }
+    //     cout << endl;
+    // }
 }
