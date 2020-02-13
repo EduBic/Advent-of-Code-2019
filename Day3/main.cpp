@@ -2,8 +2,10 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <stdint.h>
 
 using namespace std;
+using std::cout;
 
 struct Point {
     Point(): x(0), y(0) {}
@@ -39,7 +41,8 @@ void wireTracking(const Point& origin, const int sizeWire,
         // print value of wire1 at index i
         // cout << wire[i] << endl;
         char direction = wire[i].at(0);
-        int steps = stoi(wire[i].substr(1, 2)); // get second char of instruction
+        int steps = stoi(wire[i].substr(1, wire[i].length() - 1)); // get second char of instruction
+        cout << steps << endl;
 
         for (int k = 0; k < steps; k++)
         {
@@ -146,6 +149,9 @@ void getFromFile(string** wire1, int& numberOfCommas1, string** wire2, int& numb
 
         iterCount++;
     }
+
+    numberOfCommas1++;
+    numberOfCommas2++;
 }
 
 // Day 3
@@ -155,18 +161,18 @@ int main()
     // compute Manhattan distance
     //  https://xlinux.nist.gov/dads/HTML/manhattanDistance.html
 
-    // cout << "Init wires" << endl;
-    // int sizeWire1 = 4; //9
-    // string wire1[] = 
-    //     {"R8","U5","L5","D3"};
-    //     // { "R75","D30","R83","U83","L12","D49","R71","U7","L72" };
-    //     //{"R98","U47","R26","D63","R33","U87","L62","D20","R33","U53","R51"};
+    cout << "Init wires" << endl;
+    // int sizeW1 = 9; //9
+    // string w1[] = 
+    //     // {"R8","U5","L5","D3"};
+    //     { "R75","D30","R83","U83","L12","D49","R71","U7","L72" };
+    //     // {"R98","U47","R26","D63","R33","U87","L62","D20","R33","U53","R51"};
 
-    // int sizeWire2 = 4;
-    // string wire2[] = 
-    //     {"U7","R6","D4","L4"};                                          // ex 0
-    //     // { "U62","R66","U55","R34","D71","R55","D58","R83" };         // ex 1 => 8
-    //     // {"U98","R91","D20","R16","D67","R40","U7","R15","U6","R7"};  // ex 2
+    // int sizeW2 = 8;
+    // string w2[] = 
+    //     // {"U7","R6","D4","L4"};                                           // ex 0
+    //     { "U62","R66","U55","R34","D71","R55","D58","R83" };                // ex 1 => 8
+    //     // {"U98","R91","D20","R16","D67","R40","U7","R15","U6","R7"};      // ex 2
 
     // read from file
     int sizeW1 = 0;
@@ -175,10 +181,6 @@ int main()
     string* w2 = nullptr;
 
     getFromFile(&w1, sizeW1, &w2, sizeW2);
-
-    // numberOfCommas + 1
-    sizeW1++;
-    sizeW2++;
 
     cout << sizeW1 << " & " << sizeW2 << endl;
     // for (int i = 0; i < sizeW1; i++) {
@@ -191,8 +193,8 @@ int main()
 
     
     cout << "Init Board" << endl;
-    const int numColumns = 50000;
-    const int numRows = 50000;
+    const int numColumns = 30000;
+    const int numRows = 30000;
     Point origin(numColumns / 2 - 1, numRows / 2 - 1);
     cout << "Origin (" << origin.x << ", " << origin.y << ")" << endl;
 
@@ -230,7 +232,7 @@ int main()
 
     // print(board, numRows, numColumns);
 
-    int minDistance = INT_MAX;
+    int minDistance = 214748364;
     // Compute Manhattan distance
     for (int i = 0; i < intersectionCount; i++)
     {
@@ -244,7 +246,7 @@ int main()
     cout << minDistance << " is the min distance" << endl;
 
     // print a range of origin point
-    int limitX = 200;
+    int limitX = 160;
     int limitY = 100;
     for (int r = 0; r < limitY; r++) {
         for (int c = 0; c < limitX; c++) {
