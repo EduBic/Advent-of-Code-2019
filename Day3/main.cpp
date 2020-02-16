@@ -41,8 +41,8 @@ void wireTracking(const Point& origin, const int sizeWire,
         // print value of wire1 at index i
         // cout << wire[i] << endl;
         char direction = wire[i].at(0);
-        int steps = stoi(wire[i].substr(1, wire[i].length() - 1)); // get second char of instruction
-        cout << steps << endl;
+        int steps = stoi(wire[i].substr(1, wire[i].length() - 1));
+        // cout << steps << endl;
 
         for (int k = 0; k < steps; k++)
         {
@@ -154,6 +154,43 @@ void getFromFile(string** wire1, int& numberOfCommas1, string** wire2, int& numb
     numberOfCommas2++;
 }
 
+
+int computeStepsForWire(const Point& origin, const Point& intersection, const int sizeW, const string* w)
+{
+    int currentX = origin.x;
+    int currentY = origin.y;
+    int counterSteps1 = 0;
+    for (int i = 0; !(currentY == intersection.y && currentX == intersection.x) && i < sizeW; i++)
+    {
+        char direction = w[i].at(0);
+        int steps = stoi(w[i].substr(1, w[i].length() - 1));
+
+        for (int s = 0; !(currentY == intersection.y && currentX == intersection.x) && s < steps; s++) {
+            if (direction == 'R')
+            {
+                currentX++;
+            }
+            else if (direction == 'U')
+            {
+                currentY--;
+            }
+            else if (direction == 'L')
+            {
+                currentX--;
+            }
+            else if (direction == 'D')
+            {
+                currentY++;
+            }
+            counterSteps1++;
+        }
+    }
+
+    return counterSteps1;
+}
+
+
+
 // Day 3
 int main()
 {
@@ -162,19 +199,18 @@ int main()
     //  https://xlinux.nist.gov/dads/HTML/manhattanDistance.html
 
     cout << "Init wires" << endl;
-    // int sizeW1 = 9; //9
+    // int sizeW1 = 9;
     // string w1[] = 
-    //     // {"R8","U5","L5","D3"};
-    //     { "R75","D30","R83","U83","L12","D49","R71","U7","L72" };
+        //  {"R8","U5","L5","D3"};
+        //  { "R75","D30","R83","U83","L12","D49","R71","U7","L72" };
     //     // {"R98","U47","R26","D63","R33","U87","L62","D20","R33","U53","R51"};
 
     // int sizeW2 = 8;
     // string w2[] = 
-    //     // {"U7","R6","D4","L4"};                                           // ex 0
-    //     { "U62","R66","U55","R34","D71","R55","D58","R83" };                // ex 1 => 8
+        //  {"U7","R6","D4","L4"};                                           // ex 0
+        //  { "U62","R66","U55","R34","D71","R55","D58","R83" };                // ex 1 => 8
     //     // {"U98","R91","D20","R16","D67","R40","U7","R15","U6","R7"};      // ex 2
 
-    // read from file
     int sizeW1 = 0;
     string* w1 = nullptr;
     int sizeW2 = 0;
@@ -254,4 +290,20 @@ int main()
     //     }
     //     cout << endl;
     // }
+
+
+    // Compute min digital signal distance
+    int minStepsDistance = 214748364;
+
+    for (int j = 0; j < intersectionCount; j++) {
+
+        int counterSteps1 = computeStepsForWire(origin, intersections[j], sizeW1, w1);
+        int counterSteps2 = computeStepsForWire(origin, intersections[j], sizeW2, w2);
+
+        if (counterSteps1 + counterSteps2 < minStepsDistance) {
+            minStepsDistance = counterSteps1 + counterSteps2;
+        }
+    }
+    cout << "Min signal delay (distance): " << minStepsDistance << endl;
+
 }
