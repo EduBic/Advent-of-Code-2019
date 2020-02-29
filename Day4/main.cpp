@@ -5,15 +5,33 @@ using std::cout;
 using std::endl;
 
 
-bool checkTriple(const int cm, const int dm, const int m, const int c, const int d, const int u) {
+// return true if there is a pair of digit that are not part of a larger group of matching digits
+bool check(const int cm, const int dm, const int m, const int c, const int d, const int u) {
     //                   0  1  2  3  4  5
     const int num[] = { cm, dm, m, c, d, u };
 
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 5; i++)
     {
-        if (num[i] == num[i + 1] && num[i + 1] == num[i + 2]) 
-        {
-            return true;
+        if (num[i] == num[i + 1]) {
+            // I have a pair of digits
+            if (i == 0) {
+                // edge left
+                if (num[i] != num[i + 2]) {
+                    return true;
+                }
+            }
+            else if (i == 4) {
+                // edge right
+                if (num[i] != num[i - 1]) {
+                    return true;
+                }
+            }
+            else {
+                // inside array
+                if (num[i - 1] != num[i] && num[i] != num[i + 2]) {
+                    return true;
+                }
+            }
         }
     }
 
@@ -43,8 +61,8 @@ int main()
                                         + (c * 100) + (d * 10) + u;
                             // cout << counter << ", ";
                             if ( (counter >= min && counter <= max) && 
-                                (cm == dm || dm == m || m == c || c == d || d == u) &&
-                                !checkTriple(cm, dm, m, c, d, u) )
+                                // (cm == dm || dm == m || m == c || c == d || d == u) &&
+                                check(cm, dm, m, c, d, u) )
                             {
                                 cout << cm << dm << m << c << d << u << endl;
                                 passwordsCounter++;
