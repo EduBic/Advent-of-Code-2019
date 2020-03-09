@@ -111,15 +111,24 @@ int main(int argc, char *argv[])
     
     // Documentation:
     // Give first input: 
-    // 1 => Thermal Environment Supervision Terminal (TEST)
-    // 5 => ID for the ship's thermal radiator controller
+    // 1 => Thermal Environment Supervision Terminal (TEST) (day 5 part 1)
+    // 5 => ID for the ship's thermal radiator controller   (day 5 part 2)
     
-    // j is out program counter
+    // j is our program counter/instruction pointer
     for (int j = 0; j < numberOfCommas + 1;)
     {
+        // PRINT MEMORY
+        // for (int k = 0; k < numberOfCommas + 1; k++) {
+        //     cout << memory[k] << " ";
+        // }
+        // cout << endl;
+
         int instruction = memory[j];  // => ex. 1002 -> 02 op, 0 param1 mode, 1 param2 mode, 0 param3 mode  
 
         int op;
+        // 0 == position mode
+        // 1 == immediate mode
+        // N.B. Parameters that an instruction writes to will never be in immediate mode.
         int param1Mode;
         int param2Mode;
         int param3Mode;
@@ -161,9 +170,77 @@ int main(int argc, char *argv[])
         {
             // ex. 4,  50
             int i1 = param1Mode == 0 ? memory[j + 1] : j + 1;
-            cout << memory[i1];
+            cout << "Output: " << memory[i1] << endl;
             
             j += 2;
+        }
+        else if (op == 5)
+        {
+            int i1 = param1Mode == 0 ? memory[j + 1] : j + 1;
+            int i2 = param2Mode == 0 ? memory[j + 2] : j + 2;
+
+            int param1 = memory[i1];
+            int param2 = memory[i2];
+            if (param1 != 0)
+            {
+                j = param2;
+            }
+            else {
+                j += 3;
+            }
+        }
+        else if (op == 6)   // jump if false
+        {
+            int i1 = param1Mode == 0 ? memory[j + 1] : j + 1;
+            int i2 = param2Mode == 0 ? memory[j + 2] : j + 2;
+
+            int param1 = memory[i1];
+            int param2 = memory[i2];
+            if (param1 == 0)
+            {
+                j = param2;
+            }
+            else {
+                j += 3;
+            }
+        }
+        else if (op == 7)   // less to
+        {
+            int i1 = param1Mode == 0 ? memory[j + 1] : j + 1;
+            int i2 = param2Mode == 0 ? memory[j + 2] : j + 2;
+            int i3 = param3Mode == 0 ? memory[j + 3] : j + 3;
+
+            int param1 = memory[i1];
+            int param2 = memory[i2];
+            int param3 = i3;    // TODO
+            if(param1 < param2)
+            {
+                memory[param3] = 1;
+            }
+            else
+            {
+                memory[param3] = 0;
+            }
+            j += 4;
+        }
+        else if (op == 8)   // equal to
+        {
+            int i1 = param1Mode == 0 ? memory[j + 1] : j + 1;
+            int i2 = param2Mode == 0 ? memory[j + 2] : j + 2;
+            int i3 = param3Mode == 0 ? memory[j + 3] : j + 3;
+
+            int param1 = memory[i1];
+            int param2 = memory[i2];
+            int param3 = i3;    // TODO
+            if(param1 == param2)
+            {
+                memory[param3] = 1;
+            }
+            else
+            {
+                memory[param3] = 0;
+            }
+            j += 4;
         }
         else if (op == 99)
         {
