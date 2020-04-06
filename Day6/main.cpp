@@ -1,113 +1,96 @@
-#include <string>
 #include <iostream>
+#include <sstream>
+
+#include "TreeNode.hpp"
 
 using namespace std;
 
-template<class T> 
-class Node
-{
-public:
+TreeNode* findTreeNode(const string& key, TreeNode* root) {
+    List<TreeNode*>* supportList = new List<TreeNode*>();
+    supportList->push_back(root); // first node
 
-    Node(T value): value(value), child(nullptr) {}
-
-    T getValue() const {
-        return this->value;
-    }
-
-    void setChild(Node<T>* child) {
-        this->child = child;
-    }
-
-    Node<T>* getChild() {
-        return this->child;
-    }
-
-private:
-    T value;
-    Node<T>* child;
-};
-
-template<class T> 
-class List
-{
-public:
-    List(): first(nullptr), size(0) {}
-
-    void push_back(T newItem) {
-        // assert child != nullptr
-        if (first == nullptr) 
-        {
-            first = new Node<T>(newItem);
+    Node<TreeNode*>* iter = supportList->next();
+    while (!supportList->is_empty())
+    {
+        TreeNode* currentTreeNode = supportList->pop_front();
+        // use the value of node
+        if (currentTreeNode->getValue() == key) {
+            cout << "Found" << currentTreeNode->getValue() << endl;
+            return currentTreeNode;
         }
-        else 
-        {
-            for (Node<T>* iter = first; iter != nullptr; iter = iter->getChild()) 
+
+        if (currentTreeNode->has_children()) {
+            List<TreeNode*>* children = currentTreeNode->get_children();
+            for (Node<TreeNode*>* childIter = children->next(); 
+                childIter != nullptr; 
+                childIter = childIter->getChild())
             {
-                if (iter->getChild() == nullptr) {
-                    // end of list
-                    iter->setChild(new Node<T>(newItem));
-                    break;
-                }
+                supportList->push_back(childIter->getValue());
             }
         }
-        size++;
     }
 
-    T pop_front() {
-        Node<T>* oldFirst = first;
-        first = oldFirst->getChild();
-        T frontValue = oldFirst->getValue();
-        delete oldFirst;
-
-        size--;
-        return frontValue;
-    }
-
-    Node<T>* next() {
-        return first;
-    }
-
-    bool is_empty() const
-    {
-        return first == nullptr;
-    }
-
-private:
-    Node<T>* first;
-    int size;
-};
-
-
-class TreeNode
-{
-public:
-
-    TreeNode(string value): value(value), children(new List<TreeNode*>()) {}
-
-    string getValue() const {
-        return this->value;
-    }
-
-    void push_child(TreeNode* newChild) {
-        children->push_back(newChild);
-    }
-
-    List<TreeNode*>* get_children() {
-        return this->children;
-    }
-
-    bool has_children() {
-        return !children->is_empty();
-    }
-
-private:
-    string value;
-    List<TreeNode*>* children;
-};
+    return nullptr;
+}
 
 
 int main()
 {
+    string inputExample[] = {
+        "Sun)Mercury",
+        "Sun)Venus",
+        "Sun)Earth",
+        "Sun)Mars",
+        "Earth)Moon",
+        "Mars)Deimos",
+        "Mars)Phobos",
+    };
+    int inputExampleCount = 7;
+
+    // Find and create the root
+    // The root will never appear to the right position in the strings
+    TreeNode* root = nullptr;
+    for (int i = 0; i < inputExampleCount; i++)
+    {
+        stringstream ss(inputExample[i]);
+        string item;
+
+        for (int k = 0; getline(ss, item, ')'); k++)
+        {
+            
+        }
+    }
+
+    // Build the TREE
+    for (int i = 0; i < inputExampleCount; i++)
+    {
+        string curr = inputExample[i];
+
+        stringstream ss(curr);
+        string item;
+        TreeNode* left = nullptr;
+        // if k == 0 // left item, right otherwise
+        for (int k = 0; getline(ss, item, ')'); k++)
+        {
+            TreeNode* nodeFound = findTreeNode(item, root);
+
+
+            if (k == 0) {
+                left = new TreeNode(item);
+            }
+            else {
+                TreeNode* right = new TreeNode(item);
+                left->push_child(right);
+            }
+        }
+
+        if (root == nullptr) {
+            root = left;
+        }
+    }
+
+
+    /*
     TreeNode* sun = new TreeNode("1-Sun");
 
     TreeNode* mercury = new TreeNode("2-Mercury");
@@ -123,10 +106,6 @@ int main()
     TreeNode* phobos = new TreeNode("8-Phobos");
     mars->push_child(deimos);
     mars->push_child(phobos);
-    TreeNode* I1 = new TreeNode("9-I1");
-    moon->push_child(I1);
-    TreeNode* I2 = new TreeNode("10-I2");
-    phobos->push_child(I2);
     
     sun->push_child(mercury);
     sun->push_child(venus);
@@ -153,5 +132,5 @@ int main()
                 supportList->push_back(childIter->getValue());
             }
         }
-    }
+    } */
 }
