@@ -1,9 +1,75 @@
 #include <iostream>
 #include <sstream>
+#include <fstream>
 
 #include "TreeNode.hpp"
 
 using namespace std;
+
+// fill arrays with left items and right items from file
+void fillElements(int argc, char *argv[], string* leftItems, string* rightItems) {
+    if (argc != 2)
+    {
+        cerr << "Insert file name as input" << endl;
+        exit(1);
+    }
+
+    ifstream inputList;
+    inputList.open(argv[1]);
+
+    if (!inputList)
+    {
+        cerr << "Unable to open file " << argv[1];
+        exit(1);   // call system to stop
+    }
+
+    // 1) iterate over line of entire file
+    string line;
+    for (int i = 0; getline(inputList, line); i++)
+    {
+        // 2) iterate over a single line split by ')' symbol
+        stringstream ssLine(line);
+        string item;
+        for (int k = 0; getline(ssLine, item, ')'); k++)
+        {
+            if (k == 0)
+            {
+                leftItems[i] = item;
+                // cout << item << ")";
+            }
+            else 
+            {
+                rightItems[i] = item;
+                // cout << item << endl;
+            }
+        }
+    }
+}
+
+int linesCounter(int argc, char *argv[]) {
+    if (argc != 2)
+    {
+        cerr << "Insert file name as input" << endl;
+        exit(1);
+    }
+
+    ifstream inputList;
+    inputList.open(argv[1]);
+
+    if (!inputList)
+    {
+        cerr << "Unable to open file " << argv[1];
+        exit(1);   // call system to stop
+    }
+
+    int counter = 0;
+    string line;
+    while (getline(inputList, line))
+    {
+        counter++;
+    }
+    return counter;
+}
 
 TreeNode* findTreeNode(const string& key, TreeNode* root) {
     List<TreeNode*>* supportList = new List<TreeNode*>();
@@ -33,88 +99,72 @@ TreeNode* findTreeNode(const string& key, TreeNode* root) {
     return nullptr;
 }
 
-
-int main()
+string findRoot(const int inputExampleCount, const string* leftItems, const string* rightItems) 
 {
-    string inputExample[] = {
-        "Sun)Mercury",
-        "Sun)Venus",
-        "Sun)Earth",
-        "Sun)Mars",
-        "Earth)Moon",
-        "Mars)Deimos",
-        "Mars)Phobos",
-    };
-    int inputExampleCount = 7;
-
-    // Find and create the root
-    // The root will never appear to the right position in the strings
-    TreeNode* root = nullptr;
+    string rootId;
     for (int i = 0; i < inputExampleCount; i++)
     {
-        stringstream ss(inputExample[i]);
-        string item;
-
-        for (int k = 0; getline(ss, item, ')'); k++)
+        bool isRoot = true;
+        for (int k = 0; k < inputExampleCount; k++)
         {
-            
+            if (leftItems[i] == rightItems[k])
+            {
+                isRoot = false;
+                break;
+            }
+        }
+
+        if (isRoot)
+        {
+            return leftItems[i];
         }
     }
+
+    return "";
+}
+
+
+int main(int argc, char *argv[])
+{
+    int inputExampleCount = linesCounter(argc, argv);
+    string* leftItems = new string[inputExampleCount];
+    string* rightItems = new string[inputExampleCount];
+
+    cout << "Total lines count: " << inputExampleCount << endl;
+
+    fillElements(argc, argv, leftItems, rightItems);
+
+    // Find root
+    TreeNode* root = new TreeNode("Sun");
+    //TreeNode* root = new TreeNode("COM");
 
     // Build the TREE
-    for (int i = 0; i < inputExampleCount; i++)
+    List<TreeNode*>* buildSupportList = new List<TreeNode*>();
+    buildSupportList->push_back(root); // first node
+
+    while (!buildSupportList->is_empty())
     {
-        string curr = inputExample[i];
+        TreeNode* currNode = buildSupportList->pop_front();
 
-        stringstream ss(curr);
-        string item;
-        TreeNode* left = nullptr;
-        // if k == 0 // left item, right otherwise
-        for (int k = 0; getline(ss, item, ')'); k++)
+        for (int i = 0; i < inputExampleCount; i++)
         {
-            TreeNode* nodeFound = findTreeNode(item, root);
+            // read one line "left)right"
+            string left = leftItems[i];
+            string right = rightItems[i];
 
+            if (left == currNode->getValue()) {
+                TreeNode* rightNode = new TreeNode(right);
+                currNode->push_child(rightNode);
 
-            if (k == 0) {
-                left = new TreeNode(item);
+                buildSupportList->push_back(rightNode);
             }
-            else {
-                TreeNode* right = new TreeNode(item);
-                left->push_child(right);
-            }
-        }
-
-        if (root == nullptr) {
-            root = left;
         }
     }
-
-
-    /*
-    TreeNode* sun = new TreeNode("1-Sun");
-
-    TreeNode* mercury = new TreeNode("2-Mercury");
-
-    TreeNode* venus = new TreeNode("3-Venus");
-
-    TreeNode* earth = new TreeNode("4-Earth");
-    TreeNode* moon = new TreeNode("6-Moon");
-    earth->push_child(moon);
-
-    TreeNode* mars = new TreeNode("5-Mars");
-    TreeNode* deimos = new TreeNode("7-Deimos");
-    TreeNode* phobos = new TreeNode("8-Phobos");
-    mars->push_child(deimos);
-    mars->push_child(phobos);
-    
-    sun->push_child(mercury);
-    sun->push_child(venus);
-    sun->push_child(earth);
-    sun->push_child(mars);
 
     // cout all nodes
     List<TreeNode*>* supportList = new List<TreeNode*>();
-    supportList->push_back(sun); // first node
+    supportList->push_back(root); // first node
+    int nodesCounter = 1;
 
     Node<TreeNode*>* iter = supportList->next();
     while (!supportList->is_empty())
@@ -130,7 +180,10 @@ int main()
                 childIter = childIter->getChild())
             {
                 supportList->push_back(childIter->getValue());
+                nodesCounter++;
             }
         }
-    } */
+    }
+
+    cout << "Nodes count: " << nodesCounter << endl;
 }

@@ -1,0 +1,7 @@
+Sun)Mercury
+Sun)Venus
+Sun)Earth
+Sun)Mars
+Earth)Moon
+Mars)Deimos
+Mars)Phobos
