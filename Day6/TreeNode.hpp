@@ -6,10 +6,19 @@ class TreeNode
 {
 public:
 
-    TreeNode(std::string value): value(value), children(new List<TreeNode*>()) {}
+    TreeNode(int id, std::string value, int level) : 
+        id(id), value(value), level(level), children(new List<TreeNode*>()) {}
 
     std::string getValue() const {
         return this->value;
+    }
+
+    int getId() const {
+        return this->id;
+    }
+
+    int getLevel() const {
+        return this->level;
     }
 
     void push_child(TreeNode* newChild) {
@@ -25,6 +34,8 @@ public:
     }
 
 private:
+    int id;
     std::string value;
+    int level;
     List<TreeNode*>* children;
 };

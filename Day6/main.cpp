@@ -135,12 +135,13 @@ int main(int argc, char *argv[])
     fillElements(argc, argv, leftItems, rightItems);
 
     // Find root
-    TreeNode* root = new TreeNode("Sun");
+    TreeNode* root = new TreeNode(0, "COM", 0);
     //TreeNode* root = new TreeNode("COM");
 
     // Build the TREE
     List<TreeNode*>* buildSupportList = new List<TreeNode*>();
     buildSupportList->push_back(root); // first node
+    int nodesCounter = 1;
 
     while (!buildSupportList->is_empty())
     {
@@ -153,25 +154,31 @@ int main(int argc, char *argv[])
             string right = rightItems[i];
 
             if (left == currNode->getValue()) {
-                TreeNode* rightNode = new TreeNode(right);
-                currNode->push_child(rightNode);
+                TreeNode* rightNode = new TreeNode(nodesCounter, right, currNode->getLevel() + 1);
+                nodesCounter++;
 
+                currNode->push_child(rightNode);
                 buildSupportList->push_back(rightNode);
             }
         }
     }
 
+    // nodesCounter == N of nodes in the tree
+
     // cout all nodes
     List<TreeNode*>* supportList = new List<TreeNode*>();
     supportList->push_back(root); // first node
-    int nodesCounter = 1;
-
+    int totLevelCounter = 0;
+    
     Node<TreeNode*>* iter = supportList->next();
     while (!supportList->is_empty())
     {
         TreeNode* currentTreeNode = supportList->pop_front();
         // use the value of node
-        cout << currentTreeNode->getValue() << endl;
+        // cout << currentTreeNode->getId() << "-" 
+        //     << currentTreeNode->getValue() << " (" 
+        //     << currentTreeNode->getLevel() << ")" << endl;
+        totLevelCounter += currentTreeNode->getLevel();
 
         if (currentTreeNode->has_children()) {
             List<TreeNode*>* children = currentTreeNode->get_children();
@@ -180,10 +187,11 @@ int main(int argc, char *argv[])
                 childIter = childIter->getChild())
             {
                 supportList->push_back(childIter->getValue());
-                nodesCounter++;
             }
         }
     }
 
     cout << "Nodes count: " << nodesCounter << endl;
+    cout << "Direct relations: " << nodesCounter - 1 << endl;
+    cout << "Total Relations: " << totLevelCounter << endl;
 }
