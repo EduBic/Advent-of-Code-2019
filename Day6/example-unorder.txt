@@ -5,3 +5,5 @@ Mars)Phobos
 Sun)Mercury
 Sun)Mars
 Earth)Moon
+Moon)YOU
+Mars)SAN

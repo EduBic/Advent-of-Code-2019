@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
     fillElements(argc, argv, leftItems, rightItems);
 
     // Find root
-    TreeNode* root = new TreeNode(0, "COM", 0);
+    TreeNode* root = new TreeNode(0, "COM", 0, nullptr);
     //TreeNode* root = new TreeNode("COM");
 
     // Build the TREE
@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
             string right = rightItems[i];
 
             if (left == currNode->getValue()) {
-                TreeNode* rightNode = new TreeNode(nodesCounter, right, currNode->getLevel() + 1);
+                TreeNode* rightNode = new TreeNode(nodesCounter, right, currNode->getLevel() + 1, currNode);
                 nodesCounter++;
 
                 currNode->push_child(rightNode);
@@ -189,6 +189,26 @@ int main(int argc, char *argv[])
                 supportList->push_back(childIter->getValue());
             }
         }
+    }
+
+    // find ancestor between YOU and SAN
+    TreeNode* youNode = findTreeNode("YOU", root);
+
+    TreeNode* currParent = youNode->get_parent();
+    while (currParent != nullptr)
+    {
+        TreeNode* sanNode = findTreeNode("SAN", currParent);
+        if (sanNode == nullptr)
+        {
+            currParent = currParent->get_parent();
+        }
+        else
+        {
+            int res = youNode->getLevel() + sanNode->getLevel() - 2 * currParent->getLevel()  - 2;
+            cout << "Distance between YOU and SAN: " << res << endl;
+            break;
+        }
+        
     }
 
     cout << "Nodes count: " << nodesCounter << endl;
