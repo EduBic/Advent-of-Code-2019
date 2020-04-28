@@ -164,7 +164,7 @@ int execute(int argc, char *argv[], int setting, int input)
         {
             // ex. 3, 50
             int i1 = param1Mode == 0 ? memory[j + 1] : j + 1;
-            cout << "Insert input:" << endl;
+            // cout << "Insert input:" << endl;
             //cin >> memory[i1];
             if (settingOn)
             {
@@ -263,4 +263,5 @@ int execute(int argc, char *argv[], int setting, int input)
     }
 
     cout << endl << "End" << endl;
+    return -1;
 }
