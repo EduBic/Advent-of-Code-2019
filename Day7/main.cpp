@@ -1,11 +1,12 @@
-#include "intcode_computer.cpp"
+#include "Amplificator.hpp"
 
 using namespace std;
 
 
 int main(int argc, char * argv[]) {
     
-    int amp_count = 5;
+    int min_window_settings = 5;
+    int max_window_settings = 9;
 
     // setting 0, 1, 2, 3, 4
 
@@ -18,39 +19,56 @@ int main(int argc, char * argv[]) {
     int count = 0;
     int max_out = 0;
 
-    for (int a = 0; a < amp_count; a++) 
+    for (int a = min_window_settings; a <= max_window_settings; a++) 
     {
-        for (int b = 0; b < amp_count; b++) 
+        for (int b = min_window_settings; b <= max_window_settings; b++) 
         {
             if (b != a) 
             {
-                for (int c = 0; c < amp_count; c++) 
+                for (int c = min_window_settings; c <= max_window_settings; c++) 
                 {
                     if (c != a && c != b)
                     {
-                        for (int d = 0; d < amp_count; d++) 
+                        for (int d = min_window_settings; d <= max_window_settings; d++) 
                         {
                             if (d != a && d != b && d != c)
                             {
-                                for (int e = 0; e < amp_count; e++) 
+                                for (int e = min_window_settings; e <= max_window_settings; e++) 
                                 {
                                     if (e != a && e != b && e != c && e != d)
                                     {
+                                        // combination: a b c d e <= settings for ampls
                                         count++;
-                                        int amp_output_a = execute(argc, argv, a, 0);
-                                        int amp_output_b = execute(argc, argv, b, amp_output_a);
-                                        int amp_output_c = execute(argc, argv, c, amp_output_b);
-                                        int amp_output_d = execute(argc, argv, d, amp_output_c);
-                                        int amp_output_e = execute(argc, argv, e, amp_output_d);
+                                        int amp_output = 0;
+                                        Amplificator* amp_a = new Amplificator("A", a, argc, argv);
+                                        Amplificator* amp_b = new Amplificator("B", b, argc, argv);
+                                        Amplificator* amp_c = new Amplificator("C", c, argc, argv);
+                                        Amplificator* amp_d = new Amplificator("D", d, argc, argv);
+                                        Amplificator* amp_e = new Amplificator("E", e, argc, argv);
+
+                                        while (!amp_a->is_halted() && 
+                                                !amp_b->is_halted() && 
+                                                !amp_c->is_halted() && 
+                                                !amp_d->is_halted() && 
+                                                !amp_e->is_halted()) 
+                                        {
+                                            amp_output = amp_a->execute(amp_output);
+                                            amp_output = amp_b->execute(amp_output);
+                                            amp_output = amp_c->execute(amp_output);
+                                            amp_output = amp_d->execute(amp_output);
+                                            amp_output = amp_e->execute(amp_output);
+                                        }
 
                                         // signal_input = amp_output;
                                         cout << a << "," << b << "," << c << "," << d << "," << e 
-                                             << "\t=>\t"
-                                             << "Signal Output: " << amp_output_e << endl;
+                                            << "\t=>\t"
+                                            << "Signal Output: " << amp_output << endl;
 
-                                        if (amp_output_e > max_out) {
-                                            max_out = amp_output_e; 
+                                        if (amp_output > max_out) {
+                                            max_out = amp_output; 
                                         }
+
+                                        delete amp_a, amp_b, amp_c, amp_d, amp_e;
                                     }
                                 }
                             }

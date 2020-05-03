@@ -102,7 +102,7 @@ int execute(int argc, char *argv[], int setting, int input)
     // read input from file
     // ex.: 3,4,5,30,0, ...
     const string input_program = readInput(argc, argv);
-    int numberOfCommas = commasCounter(input_program);
+    const int numberOfCommas = commasCounter(input_program);
 
     // declare and init array for inputs from file
     int* memory = loadProgram(numberOfCommas, input_program);
