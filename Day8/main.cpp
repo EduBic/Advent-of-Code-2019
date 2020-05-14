@@ -31,8 +31,8 @@ string readInput(int argc, char *argv[]) {
 
 int main(int argc, char* argv[])
 {
-    int wide = 25;
-    int tall = 6;
+    const int wide = 25;
+    const int tall = 6;
 
     string input = readInput(argc, argv);
 
@@ -45,23 +45,39 @@ int main(int argc, char* argv[])
     int currNumZeroDigit = 0;
     int currNumOneDigit = 0;
     int currNumTwoDigit = 0;
+    int finalImage[wide * tall];
+    for (int i = 0; i < wide * tall; i++)
+    {
+        finalImage[i] = 2;
+    }
+    
+    int imageLengthCount = 0;
 
     for (int i = 0; i < input.length(); i++) 
     {
         int pixel = (input[i] - '0') % 48;
 
-        if (pixel == 0) {
+        if (pixel == 0)
+        {
             currNumZeroDigit++;
+            if (finalImage[imageLengthCount] == 2)
+            {
+                finalImage[imageLengthCount] = 0;
+            }
         }
         else if (pixel == 1) 
         {
             currNumOneDigit++;
+            if (finalImage[imageLengthCount] == 2)
+            {
+                finalImage[imageLengthCount] = 1;
+            }
         }
         else if (pixel == 2)
         {
             currNumTwoDigit++;
         }
-
+        imageLengthCount++;
 
         if (i + 1 == wide * tall * layer)
         {
@@ -77,9 +93,18 @@ int main(int argc, char* argv[])
             currNumZeroDigit = 0;
             currNumOneDigit = 0;
             currNumTwoDigit = 0;
+            imageLengthCount = 0;
         }
     }
 
     cout << "Final Result: " << minNumOneDigit * minNumTwoDigit << endl;
-
+    cout << "Final Image: " << endl;
+    for (int i = 0; i < tall; i++)
+    {
+        for (int j = 0; j < wide; j++)
+        {
+            cout << finalImage[i * wide + j] << " ";
+        }
+        cout << endl;
+    }
 }
