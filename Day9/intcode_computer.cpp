@@ -3,13 +3,9 @@
 #include <string>
 #include <sstream>
 
+using namespace std;
 
-string readInputFile(int, char**);
-int commasCounter(const string&);
-int* loadProgram(const int, const string&);
-void splitInstruction(const int, int&, int&, int&, int&);
-int execute(int, char**, int, int);
-
+// TODO: relative mode instead of ternary operator
 
 string readInputFile(int argc, char *argv[]) {
     if (argc != 2)
@@ -66,18 +62,97 @@ int* loadProgram(const int numberOfCommas, const string& programInput) {
 }
 
 void splitInstruction(const int instruction, int& op, int& paramMode1, int& paramMode2, int& paramMode3) {
+    // ex. A B C DE => 2 1 2 02
+    // 3param 2param 1param Op
     // Cases (XY > 0)
-    // 0 1 1 XY
-    // 0 1 0 XY
-    // 0 0 1 XY
-    // 0 0 0 XY
+    // 0-0000 0-0100 0-0200 0-1000 0-1100 0-1200 0-2000 0-2100 0-2200 
+    // 2-0000 2-0100 2-0200 2-1000 2-1100 2-1200 2-2000 2-2100 2-2200
     paramMode1 = 0;
     paramMode2 = 0;
     paramMode3 = 0;
 
     // cout << " - Read instruction: " << instruction << endl;
-
-    if (instruction > 1100 && instruction < 1200)
+    if (instruction > 22200 && instruction < 22300)
+    {
+        op = instruction % 22200;
+        paramMode1 = 2;
+        paramMode2 = 2;
+        paramMode3 = 2;
+    }
+    else if (instruction > 22100 && instruction < 22200)
+    {
+        op = instruction % 22100;
+        paramMode1 = 1;
+        paramMode2 = 2;
+        paramMode3 = 2;
+    }
+    else if (instruction > 22000 && instruction < 22100)
+    {
+        op = instruction % 22000;
+        paramMode2 = 2;
+        paramMode3 = 2;
+    }
+    else if (instruction > 21200 && instruction < 21300)
+    {
+        op = instruction % 21200;
+        paramMode1 = 2;
+        paramMode2 = 1;
+        paramMode3 = 2;
+    }
+    else if (instruction > 21100 && instruction < 21200)
+    {
+        op = instruction % 21100;
+        paramMode1 = 1;
+        paramMode2 = 1;
+        paramMode3 = 2;
+    }
+    else if (instruction > 21000 && instruction < 21100)
+    {
+        op = instruction % 21000;
+        paramMode2 = 1;
+        paramMode3 = 2;
+    }
+    else if (instruction > 20200 && instruction < 20300)
+    {
+        op = instruction % 20200;
+        paramMode1 = 2;
+        paramMode3 = 2;
+    }
+    else if (instruction > 20100 && instruction < 20200)
+    {
+        op = instruction % 20100;
+        paramMode1 = 1;
+        paramMode3 = 2;
+    }
+    else if (instruction > 20000 && instruction < 20100)
+    {
+        op = instruction % 20000;
+        paramMode3 = 2;
+    }
+    else if (instruction > 2200 && instruction < 2300)
+    {
+        op = instruction % 2200;
+        paramMode1 = 2;
+        paramMode2 = 2;
+    }
+    else if (instruction > 2100 && instruction < 2200)
+    {
+        op = instruction % 2100;
+        paramMode1 = 1;
+        paramMode2 = 2;
+    }
+    else if (instruction > 2000 && instruction < 2100)
+    {
+        op = instruction % 2000;
+        paramMode2 = 2;
+    }
+    else if (instruction > 1200 && instruction < 1300)
+    {
+        op = instruction % 1200;
+        paramMode1 = 2;
+        paramMode2 = 1;
+    }
+    else if (instruction > 1100 && instruction < 1200)
     {
         op = instruction % 1100;
         paramMode1 = 1;
@@ -87,6 +162,11 @@ void splitInstruction(const int instruction, int& op, int& paramMode1, int& para
     {
         op = instruction % 1000;
         paramMode2 = 1;
+    }
+    else if(instruction > 200 && instruction < 300)
+    {
+        op = instruction % 200;
+        paramMode1 = 2;
     }
     else if (instruction > 100 && instruction < 200)
     {
@@ -118,11 +198,6 @@ int execute(int argc, char *argv[], int setting, int input)
 
     // ---- Day 5 ----
     
-    // Documentation:
-    // Give first input: 
-    // 1 => Thermal Environment Supervision Terminal (TEST) (day 5 part 1)
-    // 5 => ID for the ship's thermal radiator controller   (day 5 part 2)
-    
     // j is our program counter/instruction pointer
     for (int j = 0; j < numberOfCommas + 1;)
     {
@@ -132,11 +207,13 @@ int execute(int argc, char *argv[], int setting, int input)
         // }
         // cout << endl;
 
-        int instruction = memory[j];  // => ex. 1002 -> 02 op, 0 param1 mode, 1 param2 mode, 0 param3 mode  
+        // ex. 1002 -> 02 op, 0 param1 mode, 1 param2 mode, 0 param3 mode
+        int instruction = memory[j];
 
         int op;
         // 0 == position mode
         // 1 == immediate mode
+        // 2 == relative mode
         // N.B. Parameters that an instruction writes to will never be in immediate mode.
         int param1Mode;
         int param2Mode;

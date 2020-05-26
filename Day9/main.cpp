@@ -1,11 +1,11 @@
 #include <iostream>
-// #include <string>
+#include <string>
 
-std::string read() {
-    return "World";
-}
+#include "intcode_computer.cpp"
+
+using namespace std;
 
 int main(int argc, char * argv[])
 {
-    std::cout << "Hello " << read() << std::endl;
+    cout << "Hello " << endl;
 }
